@@ -150,7 +150,7 @@ export const Signup = () => {
                 size={"sm"}
                 fontSize={14}
                 isLoading={loading}
-                onClick={submit}
+                onClick={() => signup(inputs)(submit)}
             >
                 Sign up
             </Button>

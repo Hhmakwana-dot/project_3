@@ -11,7 +11,6 @@ export const useLogout = () => {
     try {
       await signOut(auth);
       localStorage.removeItem("user-info");
-      console.log("logout");
       logout();
     } catch (error) {
       toaster(error.message, "error");

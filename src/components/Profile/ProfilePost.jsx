@@ -1,16 +1,12 @@
 import { Flex, Grid, GridItem, Image, Text, Button, CloseButton, Dialog, Portal, Box, Avatar, Separator, VStack } from '@chakra-ui/react'
-import React from 'react'
 import { AiFillHeart } from 'react-icons/ai'
 import { FaComment } from 'react-icons/fa'
 import { MdDelete } from 'react-icons/md'
 import { Comment } from '../Comment/Comment'
 import { PostFooter } from '../FeedPosts/PostFooter'
-
-
 export const ProfilePost = ({ img }) => {
   return (
     <>
-
       <Dialog.Root isCentered={true} size={{ base: '3xl', md: 'cover' }} closeOnEscape  >
         <Dialog.Trigger asChild>
           <Button variant="outline" h={'410px'} overflow={'hidden'} p={0} >
@@ -131,7 +127,7 @@ export const ProfilePost = ({ img }) => {
                         text={'Nice pic'} />
                       <Comment createdAt='1d ago'
                         username='asaprogrammer_'
-                        profilePic={'https://bit.ly/kent-c-dodds'}
+                        profilePic={'https://bit.ly/ken7654t-c-dodds'}
                         text={'Good clone dude!'} /> */}
 
                     </VStack>
