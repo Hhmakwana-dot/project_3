@@ -3,6 +3,7 @@ import useUserProfileStore from "../../store/userProfileStore";
 import useAuthStore from "../../store/authStore";
 import EditProfile from './EditProfile';
 import { Avatar } from './Avatar';
+import { useFollowUser } from '../../hooks/useFollowUser';
 export const ProfileHeader = () => {
     const { userProfile } = useUserProfileStore();
     const authUser = useAuthStore(state => state.user);
@@ -40,7 +41,7 @@ export const ProfileHeader = () => {
                                 </Dialog.Root>
                             </Flex>)}
                             {visitingAnotherProfileAndAuth && (<Flex gap={4} alignItems={"center"} justifyContent={"center"} >
-                                <Button bg={'blue.500'} color={'white'} _hover={{ bg: 'blue.600' }} size={{ base: 'xs', md: 'sm' }} >Follow</Button>
+                                <Button bg={'blue.500'} color={'white'} _hover={{ bg: 'blue.600' }} size={{ base: 'xs', md: 'sm' }} onClick={handleFollowUser} isLoading={isUpdating} >{isFollowing ? "Unfollow" : "Follow"}</Button>
                             </Flex>)}
 
                         </Flex>

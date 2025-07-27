@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import useAuthStore from "../store/authStore";
 import useUserProfileStore from "../store/userProfileStore";
 import { useShowToast } from "./useShowToast";
+import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
 
-export const useFollowUser = () => {
+export const useFollowUser = (userId) => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const { authUser, setAuthUser } = useAuthStore();
