@@ -1,11 +1,19 @@
 import { Box, Button, FieldRoot, Flex, Group, Input, InputGroup, Text } from '@chakra-ui/react'
 import { useState } from 'react'
 import { CommentLogo, NotificationsLogo, UnlikeLogo } from '../../assets/contants';
+import { usePostComment } from '../../hooks/usePostComment';
+import useAuthStore from '../../store/authStore';
 
-export const PostFooter = ({ username, isProfilePage }) => {
+export const PostFooter = ({ post, username, isProfilePage }) => {
   const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState(1000);
-
+  const { isCommenting, handlePostComment } = usePostComment();
+  const [comment, setComment] = useState("");
+  const authUser = useAuthStore((state) => state.user);
+  const handleSubmitComment = async () => {
+    await handlePostComment(post.id, comment);
+    setComment("");
+  };
   const handleLike = () => {
     if (liked) {
       setLikes(likes - 1);
@@ -42,20 +50,20 @@ export const PostFooter = ({ username, isProfilePage }) => {
           </Text>
         </>
       )}
-
       {/* Comment Input */}
-      <Flex alignItems={"center"} gap={2} justifyContent={"space-between"} w={"full"}>
-        <InputGroup w={"full"} mt={2} mb={1} alignItems={"center"} gap={2} endElement={<Button fontSize={14}
-          color={"blue.500"}
-          fontWeight={600}
-          cursor={"pointer"}
-          _hover={{ color: "white" }}
-          bg={"transparent"}>Post</Button>}>
-          <Input variant={"flushed"} placeholder={"Add a comment..."} fontSize={14} />
-        </InputGroup>
-      </Flex>
 
-
+      {authUser && (
+        <Flex alignItems={"center"} gap={2} justifyContent={"space-between"} w={"full"}>
+          <InputGroup w={"full"} mt={2} mb={1} alignItems={"center"} gap={2} endElement={<Button fontSize={14}
+            color={"blue.500"}
+            fontWeight={600}
+            cursor={"pointer"}
+            _hover={{ color: "white" }}
+            bg={"transparent"} onClick={handleSubmitComment} isLoading={isCommenting} >Post</Button>}>
+            <Input variant={"flushed"} placeholder={"Add a comment..."} fontSize={14} onChange={(e) => setComment(e.target.value)} value={comment} />
+          </InputGroup>
+        </Flex>
+      )}
     </Box>
   )
 }

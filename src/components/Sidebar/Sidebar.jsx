@@ -1,50 +1,18 @@
-import { Avatar, AvatarGroup, Box, Button, Flex, Link } from '@chakra-ui/react'
+import { Box, Button, Flex, Link } from '@chakra-ui/react'
 import { Link as RouterLink } from 'react-router-dom';
-import { CreatePostLogo, InstagramLogo, InstagramMobileLogo, NotificationsLogo, SearchLogo } from '../../assets/contants';
-import { AiFillHome } from 'react-icons/ai';
+import { InstagramLogo, InstagramMobileLogo } from '../../assets/contants';
 import { BiLogOut } from 'react-icons/bi';
 import { useLogout } from '../../hooks/useLogout';
 import useAuthStore from "../../store/authStore";
+import { SidebarItems } from './SidebarItems';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export const Sidebar = () => {
+  const navigate = useNavigate();
   // const { userProfile } = useUserProfileStore();
   const authUser = useAuthStore(state => state.user);
 
-  const sidebarItems = [
-    {
-      icon: <AiFillHome size={25} />,
-      text: "Home",
-      link: "/",
-    },
-
-    {
-      icon: <SearchLogo />,
-      text: "Search",
-    },
-
-    {
-      icon: <NotificationsLogo />,
-      text: "Notifications",
-    },
-    {
-      icon: <CreatePostLogo />,
-      text: "Create",
-    },
-    {
-      icon: (
-        <AvatarGroup>
-          <Avatar.Root size={"sm"} >
-            <Avatar.Fallback name="Burak Orkmez" />
-            <Avatar.Image src="/profilepic.png" />
-          </Avatar.Root>
-        </AvatarGroup>
-      ),
-
-      text: "Profile",
-      link: `/${authUser.username}`,
-    },
-
-  ];
   const { handleLogout, isLoggingOut } = useLogout()
   return (
     <Box
@@ -63,23 +31,7 @@ export const Sidebar = () => {
           <InstagramMobileLogo />
         </Link>
         <Flex direction={"column"} gap={5} cursor={"pointer"}>
-          {sidebarItems.map((item, index) => (
-            <Link
-              to={item.link || "#"}
-              as={RouterLink}
-              key={index}
-              display={'flex'}
-              alignItems={'center'}
-              gap={3}
-              p={2}
-              borderRadius={6}
-              _hover={{ bg: "whiteAlpha.200" }}
-              justifyContent={{ base: "center", md: "flex-start" }}
-            >
-              {item.icon}
-              <Box display={{ base: "none", md: "block" }}>{item.text}</Box>
-            </Link>
-          ))}
+          <SidebarItems />
         </Flex>
         {/* LOGOUT */}
 

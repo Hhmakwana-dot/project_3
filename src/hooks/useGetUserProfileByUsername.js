@@ -8,18 +8,14 @@ export const useGetUserProfileByUsername = (username) => {
   const toaster = useShowToast();
   const { userProfile, setUserProfile } = useUserProfileStore();
 
-  //const UserProfile = useUserProfileStore((state) => state.UserProfile);
   useEffect(() => {
     const getUserProfile = async (unm) => {
-      // console.log(unm);
       setIsLoading(true);
       try {
         const q = query(
           collection(firestore, "users"),
           where("username", "==", unm)
         );
-
-        console.log("Query:", q);
         const querySnapshot = await getDocs(q);
         if (querySnapshot.empty) {
           setIsLoading(false);
@@ -29,12 +25,11 @@ export const useGetUserProfileByUsername = (username) => {
         querySnapshot.forEach((doc) => {
           userDoc = doc.data();
         });
-        console.log("UserDoc:", userDoc);
         setUserProfile(userDoc);
-        console.log(userDoc);
         setIsLoading(false);
       } catch (error) {
         toaster(error.message, "error");
+        console.log(error.message);
         setIsLoading(false);
       }
     };

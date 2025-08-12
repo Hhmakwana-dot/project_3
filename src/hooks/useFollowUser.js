@@ -3,15 +3,18 @@ import useAuthStore from "../store/authStore";
 import useUserProfileStore from "../store/userProfileStore";
 import { useShowToast } from "./useShowToast";
 import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
+import { firestore } from "../firebase/firebase";
 
 export const useFollowUser = (userId) => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
-  const { authUser, setAuthUser } = useAuthStore();
+  const authUser = useAuthStore((state) => state.user);
+  const setAuthUser = useAuthStore((state) => state.setUser);
   const { userProfile, setUserProfile } = useUserProfileStore();
   const toaster = useShowToast();
   const handleFollowUser = async () => {
     setIsUpdating(true);
+
     try {
       const currentUserRef = doc(firestore, "users", authUser.uid);
       const userToFollowOrUnfollorRef = doc(firestore, "users", userId);
@@ -28,12 +31,10 @@ export const useFollowUser = (userId) => {
           ...authUser,
           following: authUser.following.filter((uid) => uid !== userId),
         });
-        setUserProfile({
-          ...userProfile,
-          followers: userProfile.following.filter(
-            (uid) => uid !== authUser.userId
-          ),
-        });
+        setUserProfile((pre) => ({
+          ...pre,
+          followers: pre.following.filter((uid) => uid !== authUser.userId),
+        }));
         localStorage.setItem(
           "user-info",
           JSON.stringify({
@@ -47,10 +48,10 @@ export const useFollowUser = (userId) => {
           ...authUser,
           following: [...authUser.following, userId],
         });
-        setUserProfile({
-          ...userProfile,
-          followers: [...userProfile.followers, authUser.uid],
-        });
+        setUserProfile((pre) => ({
+          ...pre,
+          followers: [...pre.followers, authUser.uid],
+        }));
         localStorage.setItem(
           "user-info",
           JSON.stringify({
@@ -62,6 +63,7 @@ export const useFollowUser = (userId) => {
       }
     } catch (error) {
       toaster(error.message, "error");
+      console.log(error);
     } finally {
       setIsUpdating(false);
     }

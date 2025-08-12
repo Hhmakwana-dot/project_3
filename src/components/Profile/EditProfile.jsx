@@ -116,7 +116,7 @@ export default function EditProfile() {
           />
         </Field.Root>
         <Stack spacing={6} mt={8} direction={['column', 'row']}>
-          <Button
+          {/* <Button
             bg={'red.400'}
             color={'white'}
             flex={1}
@@ -124,17 +124,14 @@ export default function EditProfile() {
               bg: 'red.500',
             }}>
             Cancel
-          </Button>
+          </Button> */}
           <Button
             bg={'blue.400'}
             color={'white'}
             flex={1}
-            _hover={{
-              bg: 'blue.500',
-            }}
+            _hover={{ bg: 'blue.500' }}
             onClick={handleEditProfile}
-            isLoading={isUpdating}
-          >
+            isLoading={isUpdating} >
             Submit
           </Button>
         </Stack>

@@ -35,6 +35,16 @@ export const ProfileHeader = () => {
                                             <Dialog.Content>
                                                 {/* <Dialog.CloseButton /> */}
                                                 <EditProfile />
+                                                <Dialog.Footer mt={-8}>
+                                                    <Dialog.ActionTrigger asChild>
+                                                        <Button variant="outline" bg={'red.400'}
+                                                            color={'white'}
+                                                            flex={1}
+                                                            _hover={{
+                                                                bg: 'red.500',
+                                                            }}>Cancel</Button>
+                                                    </Dialog.ActionTrigger>
+                                                </Dialog.Footer>
                                             </Dialog.Content>
                                         </Dialog.Positioner>
                                     </Portal>
@@ -46,13 +56,13 @@ export const ProfileHeader = () => {
 
                         </Flex>
                         <Flex alignItems={"center"} gap={{ base: 2, sm: 4 }} >
-                            <Text fontSize={{ base: 'xs', md: 'sm' }} ><Text as={'span'} fontWeight={'bold'} mr={1}>{userProfile.posts}</Text>
+                            <Text fontSize={{ base: 'xs', md: 'sm' }} ><Text as={'span'} fontWeight={'bold'} mr={1}>{userProfile.posts.length}</Text>
                                 Posts
                             </Text>
-                            <Text fontSize={{ base: 'xs', md: 'sm' }}><Text as={'span'} fontWeight={'bold'} mr={1}>{userProfile.followers}</Text>
+                            <Text fontSize={{ base: 'xs', md: 'sm' }}><Text as={'span'} fontWeight={'bold'} mr={1}>{userProfile.followers.length}</Text>
                                 Followers
                             </Text>
-                            <Text fontSize={{ base: 'xs', md: 'sm' }}><Text as={'span'} fontWeight={'bold'} mr={1}>{userProfile.following}</Text>
+                            <Text fontSize={{ base: 'xs', md: 'sm' }}><Text as={'span'} fontWeight={'bold'} mr={1}>{userProfile.following.length}</Text>
                                 Following
                             </Text>
                         </Flex>

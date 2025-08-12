@@ -1,18 +1,55 @@
 import { Flex, Grid, GridItem, Image, Text, Button, CloseButton, Dialog, Portal, Box, Avatar, Separator, VStack } from '@chakra-ui/react'
+import { useState } from 'react'
 import { AiFillHeart } from 'react-icons/ai'
 import { FaComment } from 'react-icons/fa'
 import { MdDelete } from 'react-icons/md'
 import { Comment } from '../Comment/Comment'
 import { PostFooter } from '../FeedPosts/PostFooter'
-export const ProfilePost = ({ img }) => {
+import useUserProfileStore from '../../store/userProfileStore';
+import { usePostStore } from '../../store/postStore'
+import { useShowToast } from '../../hooks/useShowToast'
+import useAuthStore from "../../store/authStore";
+import { deleteObject, ref } from "firebase/storage";
+import { firestore, storage } from "../../firebase/firebase";
+import { arrayRemove, deleteDoc, doc, updateDoc } from "firebase/firestore";
+
+
+export const ProfilePost = ({ post }) => {
+  const userProfile = useUserProfileStore((state) => state.userProfile);
+  const authUser = useAuthStore((state) => state.user);
+  const toaster = useShowToast();
+  const [isDeleting, setIsDeleting] = useState(false);
+  const deletePost = usePostStore((state) => state.deletePost);
+  const decrementPostCount = useUserProfileStore((state) => state.deletePost);
+  const handleDeletePost = async () => {
+    if (!window.confirm("Are you sure you want to delete this post?")) return;
+    if (isDeleting) return;
+    try {
+      const imageRef = ref(storage, `posts/${post.id}`);
+      await deleteObject(imageRef);
+      const userRef = doc(firestore, 'users', authUser.uid);
+      await deleteDoc(doc(firestore, 'posts', post.id));
+      await updateDoc(userRef, {
+        posts: arrayRemove(post.id),
+      });
+      deletePost(post.id);
+      // setIsDeleting(true);
+      decrementPostCount(post.id);
+      toaster("Post deleted successfully", "success");
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      toaster(error.message, "error");
+    } finally {
+      setIsDeleting(false);
+
+    }
+  }
   return (
     <>
       <Dialog.Root isCentered={true} size={{ base: '3xl', md: 'cover' }} closeOnEscape  >
         <Dialog.Trigger asChild>
           <Button variant="outline" h={'410px'} overflow={'hidden'} p={0} >
-
             {/* start */}
-
             <GridItem
               borderRadius={4}
               h={'100%'}
@@ -23,7 +60,6 @@ export const ProfilePost = ({ img }) => {
               cursor={'pointer'}
               overflow={'hidden'}
               position={'relative'} >
-
               <Flex
                 opacity={0}
                 _hover={{ opacity: 1 }}
@@ -56,7 +92,7 @@ export const ProfilePost = ({ img }) => {
                 left={0}
                 right={0}
                 bottom={0}
-                src={img}
+                src={post.imageURL}
                 alt='profile post'
               />
             </GridItem>
@@ -70,11 +106,11 @@ export const ProfilePost = ({ img }) => {
           <Dialog.Positioner >
             <Dialog.Content h={'90vh'} maxW={'1200px'}>
               <Dialog.Body bg={'black'} pb={0} >
-                <Flex gap={4} w={{ base: '90%', sm: '70%', md: 'full' }} mx={'auto'}>
+                <Flex gap={4} w={{ base: '90%', sm: '70%', md: 'full' }} mx={'auto'} maxH={'90vh'} minH={'50vh'}>
 
-                  <Box overflow={'hidden'} flex={1.5} >
-                    <Image src={img} mx={'auto'} h={'80vh'} alt='profile post' display={'block'} my={'auto'} />
-                  </Box>
+                  <Flex overflow={'hidden'} flex={1.5} justifyContent={'center'} alignItems={'center'} >
+                    <Image src={post.imageURL} mx={'auto'} h={'80vh'} alt='profile post' display={'block'} my={'auto'} />
+                  </Flex>
 
                   <Flex flex={1} flexDir={'column'} pr={10} display={{ base: 'none', md: 'flex' }} >
                     <Flex alignItems={'center'} justifyContent={'space-between'}>
@@ -82,57 +118,30 @@ export const ProfilePost = ({ img }) => {
                       <Flex alignItems={'center'} gap={4}  >
                         <Avatar.Root size={'sm'}>
                           <Avatar.Fallback name="as a programmer" />
-                          <Avatar.Image src='/profilepic.png' alt='as a programmer logo' />
+                          <Avatar.Image src={userProfile.profilePicURL} alt='as a programmer logo' />
                         </Avatar.Root>
-                        <Text fontWeight={'bold'} fontSize={12}>asaprogrammer_</Text>
+                        <Text fontWeight={'bold'} fontSize={12}>{userProfile.fullname}</Text>
+                        {console.log("caption", userProfile.caption)}
+                        <Text fontWeight={'bold'} fontSize={12}>
+                          {/* {post.caption} */}
+                        </Text>
                       </Flex>
-
-                      <Box _hover={{ bg: 'whiteAlpha.300', color: 'red.600' }} borderRadius={4} p={1} >
-                        <MdDelete size={20} cursor={'pointer'} />
-                      </Box>
+                      {authUser?.uid === userProfile.uid && (
+                        <Button size={'sm'} bg={'transparent'} _hover={{ bg: 'whiteAlpha.300', color: 'red.600' }} color={'white'} borderRadius={4} p={1} isLoading={isDeleting} onClick={handleDeletePost} >
+                          <MdDelete size={20} cursor={'pointer'} />
+                        </Button>
+                      )}
                     </Flex>
                     <Separator my={4} Color={'gray.500'} />
                     <VStack w={'full'} alignItems={'flex-start'} maxH={'350px'} overflowY={'auto'} >
-                      <Comment createdAt='1d ago'
-                        username='asaprogrammer_'
-                        profilePic='profilepic.png'
-                        text={'Dummy images from unsplash'} />
-                      <Comment createdAt='1d ago'
-                        username='asaprogrammer_'
-                        profilePic={'https://bit.ly/dan-abramov'}
-                        text={'Nice pic'} />
-                      <Comment createdAt='1d ago'
-                        username='asaprogrammer_'
-                        profilePic={'https://bit.ly/kent-c-dodds'}
-                        text={'Good clone dude!'} />
-                      <Comment createdAt='1d ago'
-                        username='asaprogrammer_'
-                        profilePic='profilepic.png'
-                        text={'Dummy images from unsplash'} />
-                      {/* <Comment createdAt='1d ago'
-                        username='asaprogrammer_'
-                        profilePic={'https://bit.ly/dan-abramov'}
-                        text={'Nice pic'} />
-                      <Comment createdAt='1d ago'
-                        username='asaprogrammer_'
-                        profilePic={'https://bit.ly/kent-c-dodds'}
-                        text={'Good clone dude!'} />
-                      <Comment createdAt='1d ago'
-                        username='asaprogrammer_'
-                        profilePic='profilepic.png'
-                        text={'Dummy images from unsplash'} />
-                      <Comment createdAt='1d ago'
-                        username='asaprogrammer_'
-                        profilePic={'https://bit.ly/dan-abramov'}
-                        text={'Nice pic'} />
-                      <Comment createdAt='1d ago'
-                        username='asaprogrammer_'
-                        profilePic={'https://bit.ly/ken7654t-c-dodds'}
-                        text={'Good clone dude!'} /> */}
-
+                      {/* comments */}
+                      {post.comments.map((comment, idx) => {
+                        return <Comment key={idx} comment={comment} />
+                      })}
+                      {/* {post.comments.map((comment, idx) => <Comment key={idx} comment={comment} />)} */}
                     </VStack>
-                    <Separator my={4} Color={'gray.800'} />
-                    <PostFooter isProfilePage={true} />
+                    {/* <Separator my={4} Color={'gray.800'} /> */}
+                    <PostFooter isProfilePage={true} post={post} />
                   </Flex>
                 </Flex>
               </Dialog.Body>

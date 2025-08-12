@@ -12,13 +12,14 @@ export const GoogleAuth = ({ prefix }) => {
 
         try {
             const newUser = await signInWithGoogle();
+            // console.log(newUser)
             if (!newUser) {
                 toaster("Google sign-in failed", "error");
                 return;
             }
             const userRef = doc(firestore, "users", newUser.user.uid);
             const userSnap = await getDoc(userRef);
-            if (newUser.exists()) {
+            if (userSnap.exists()) {
                 const userDoc = userSnap.data();
                 localStorage.setItem("user-info", JSON.stringify(userDoc));
                 loginUser(userDoc);

@@ -36,6 +36,7 @@ export const useEditProfile = () => {
       toaster("Profile updated successfully", "success");
     } catch (error) {
       toaster(error.message, "error");
+      console.log(error.message);
     }
   };
   return { editProfile, isUpdating };
